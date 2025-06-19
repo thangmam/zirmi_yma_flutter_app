@@ -1,8 +1,12 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:motion_toast/motion_toast.dart';
 import 'package:yma_app/database/app_database.dart';
 import 'package:yma_app/screens/edit_member_screen.dart';
 import 'package:yma_app/utils/db_helper.dart';
+import 'package:yma_app/utils/debouncer.dart';
 
 class MemberListScreen extends StatefulWidget {
   const MemberListScreen({super.key});
@@ -16,14 +20,29 @@ class _MemberListScreenState extends State<MemberListScreen> {
 
   bool _isLoading = true;
 
+  Timer? _timer;
+  final _debouncer = Debouncer();
+
+  final _searchCtrl = TextEditingController();
+
   @override
   void initState() {
     _fetchYMAMembers(page: 1);
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _debouncer.dispose();
+    _searchCtrl.dispose();
+  }
+
   Future<void> _fetchYMAMembers({int page = 1}) async {
-    _memberList = await DbHelper().getMemberList(page: 1);
+    _memberList = await DbHelper().getMemberList(
+      page: 1,
+      keyword: _searchCtrl.text,
+    );
     _isLoading = false;
     setState(() {});
   }
@@ -39,15 +58,13 @@ class _MemberListScreenState extends State<MemberListScreen> {
   }
 
   Widget _buildMainContent(BuildContext context) {
-    if (_memberList == null || _memberList?.isEmpty == true) {
-      return Center(child: Text("YMA Member dah luh a la ni lo"));
-    }
     return Column(
       children: [
         SizedBox(height: 4),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: TextFormField(
+            controller: _searchCtrl,
             decoration: InputDecoration(
               label: Text("Search YMA member"),
               isDense: true,
@@ -55,85 +72,98 @@ class _MemberListScreenState extends State<MemberListScreen> {
                 borderRadius: BorderRadius.circular(15),
               ),
             ),
+            onChanged: (s) {
+              // log("onChanged called : $s", name: 'member_list_screen');
+              _debouncer.debounce(() {
+                log("Ready to query database $s", name: 'member_list_screen');
+                _fetchYMAMembers(page: 1);
+              }, duration: Duration(milliseconds: 400));
+            },
           ),
         ),
         SizedBox(height: 10),
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: () {
-              _isLoading = true;
-              _memberList?.clear();
-              setState(() {});
-              _fetchYMAMembers(page: 1);
-              return Future.delayed(Duration(milliseconds: 200));
-            },
-            child: ListView.separated(
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              separatorBuilder: (context, index) {
-                return SizedBox(height: 4);
+        if (_memberList == null || _memberList?.isEmpty == true)
+          Center(child: Text("YMA Member dah luh a la ni lo")),
+
+        if (_memberList?.isNotEmpty == true)
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () {
+                _isLoading = true;
+                _memberList?.clear();
+                setState(() {});
+                _fetchYMAMembers(page: 1);
+                return Future.delayed(Duration(milliseconds: 200));
               },
-              itemBuilder: (context, index) {
-                final member = _memberList![index];
-                return Card.outlined(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          member.hming,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
+              child: ListView.separated(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                separatorBuilder: (context, index) {
+                  return SizedBox(height: 4);
+                },
+                itemBuilder: (context, index) {
+                  final member = _memberList![index];
+                  return Card.outlined(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            member.hming,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        Text(member.gender),
-                        Text(
-                          member.currentAddress,
-                          style: TextStyle(color: Colors.black54),
-                        ),
-                        if (member.nuHming != null) Text(member.nuHming ?? ''),
-                        if (member.paHming != null) Text(member.paHming ?? ''),
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                _deleteMember(member.id);
-                              },
-                              icon: Icon(
-                                Icons.delete,
-                                color: Colors.red.shade800,
+                          Text(member.gender),
+                          Text(
+                            member.currentAddress,
+                            style: TextStyle(color: Colors.black54),
+                          ),
+                          if (member.nuHming != null)
+                            Text(member.nuHming ?? ''),
+                          if (member.paHming != null)
+                            Text(member.paHming ?? ''),
+                          Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  _deleteMember(member.id);
+                                },
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Colors.red.shade800,
+                                ),
                               ),
-                            ),
-                            IconButton(
-                              onPressed: () async {
-                                final shouldRefresh =
-                                    await Navigator.of(context).push<bool?>(
-                                      MaterialPageRoute(
-                                        builder: (ctx) =>
-                                            EditMemberScreen(member: member),
-                                      ),
-                                    );
-                                if (shouldRefresh == true) {
-                                  _isLoading = true;
-                                  _memberList?.clear();
-                                  setState(() {});
-                                  _fetchYMAMembers(page: 1);
-                                }
-                              },
-                              icon: Icon(Icons.edit, color: Colors.green),
-                            ),
-                          ],
-                        ),
-                      ],
+                              IconButton(
+                                onPressed: () async {
+                                  final shouldRefresh =
+                                      await Navigator.of(context).push<bool?>(
+                                        MaterialPageRoute(
+                                          builder: (ctx) =>
+                                              EditMemberScreen(member: member),
+                                        ),
+                                      );
+                                  if (shouldRefresh == true) {
+                                    _isLoading = true;
+                                    _memberList?.clear();
+                                    setState(() {});
+                                    _fetchYMAMembers(page: 1);
+                                  }
+                                },
+                                icon: Icon(Icons.edit, color: Colors.green),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
-              itemCount: _memberList?.length ?? 0,
+                  );
+                },
+                itemCount: _memberList?.length ?? 0,
+              ),
             ),
           ),
-        ),
       ],
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:motion_toast/motion_toast.dart';
 import 'package:yma_app/constants/common_const.dart';
 import 'package:yma_app/utils/db_helper.dart';
+import 'package:yma_app/utils/member_changed_notifyer.dart';
 
 class AddMemberScreen extends StatefulWidget {
   const AddMemberScreen({super.key});
@@ -247,6 +248,8 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
                     description: Text("Member added successfully"),
                     displaySideBar: false,
                   ).show(context);
+
+                  MemberChangedNotifyer().notifyMemberChange();
                 },
                 child: Text("Add member"),
               ),

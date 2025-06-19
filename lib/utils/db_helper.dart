@@ -19,6 +19,7 @@ class DbHelper {
   Future<List<MemberInfoData>> getMemberList({
     int page = 1,
     int itemsPerPage = 10,
+    String? keyword,
   }) async {
     int offset = 0;
 
@@ -26,10 +27,17 @@ class DbHelper {
       offset = itemsPerPage * (page - 1);
     }
 
-    final results = await _db.managers.memberInfo.get(
-      offset: offset,
-      limit: itemsPerPage,
-    );
+    final query = _db.select(_db.memberInfo);
+
+    if (keyword != null && keyword.isNotEmpty == true) {
+      // filter by keyword
+      // _db.managers.memberInfo.filter((tbl) => tbl.hming.contains(keyword));
+      query.where((tbl) => tbl.hming.contains(keyword));
+    }
+
+    query.limit(itemsPerPage, offset: offset);
+
+    final results = await query.get();
     return results;
   }
 
@@ -56,6 +64,10 @@ class DbHelper {
         previousAddress: Value.absentIfNull(previousAddress),
       ),
     );
+  }
+
+  Future<int> getTotalMember() async {
+    return await _db.getTotalMember().getSingle();
   }
 
   Future<int> updateMember({

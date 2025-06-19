@@ -19,7 +19,7 @@ class MemberInfo extends Table {
   DateTimeColumn get lastUpdatedAt => dateTime()();
 }
 
-@DriftDatabase(tables: [MemberInfo])
+@DriftDatabase(tables: [MemberInfo], queries: {'getTotalMember': "SELECT COUNT(DISTINCT id) from member_info"})
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 

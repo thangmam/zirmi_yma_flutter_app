@@ -680,6 +680,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $MemberInfoTable memberInfo = $MemberInfoTable(this);
+  Selectable<int> getTotalMember() {
+    return customSelect(
+      'SELECT COUNT(DISTINCT id) AS _c0 FROM member_info',
+      variables: [],
+      readsFrom: {memberInfo},
+    ).map((QueryRow row) => row.read<int>('_c0'));
+  }
+
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
