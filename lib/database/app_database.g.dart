@@ -676,10 +676,369 @@ class MemberInfoCompanion extends UpdateCompanion<MemberInfoData> {
   }
 }
 
+class $MemberFeeTable extends MemberFee
+    with TableInfo<$MemberFeeTable, MemberFeeData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MemberFeeTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _memberInfoIdMeta = const VerificationMeta(
+    'memberInfoId',
+  );
+  @override
+  late final GeneratedColumn<int> memberInfoId = GeneratedColumn<int>(
+    'member_info_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES member_info (id)',
+    ),
+  );
+  static const VerificationMeta _amountPaidMeta = const VerificationMeta(
+    'amountPaid',
+  );
+  @override
+  late final GeneratedColumn<double> amountPaid = GeneratedColumn<double>(
+    'amount_paid',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _paidOnMeta = const VerificationMeta('paidOn');
+  @override
+  late final GeneratedColumn<DateTime> paidOn = GeneratedColumn<DateTime>(
+    'paid_on',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _yearMeta = const VerificationMeta('year');
+  @override
+  late final GeneratedColumn<int> year = GeneratedColumn<int>(
+    'year',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    memberInfoId,
+    amountPaid,
+    paidOn,
+    year,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'member_fee';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MemberFeeData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('member_info_id')) {
+      context.handle(
+        _memberInfoIdMeta,
+        memberInfoId.isAcceptableOrUnknown(
+          data['member_info_id']!,
+          _memberInfoIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_memberInfoIdMeta);
+    }
+    if (data.containsKey('amount_paid')) {
+      context.handle(
+        _amountPaidMeta,
+        amountPaid.isAcceptableOrUnknown(data['amount_paid']!, _amountPaidMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_amountPaidMeta);
+    }
+    if (data.containsKey('paid_on')) {
+      context.handle(
+        _paidOnMeta,
+        paidOn.isAcceptableOrUnknown(data['paid_on']!, _paidOnMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_paidOnMeta);
+    }
+    if (data.containsKey('year')) {
+      context.handle(
+        _yearMeta,
+        year.isAcceptableOrUnknown(data['year']!, _yearMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_yearMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MemberFeeData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MemberFeeData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      memberInfoId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}member_info_id'],
+      )!,
+      amountPaid: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}amount_paid'],
+      )!,
+      paidOn: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}paid_on'],
+      )!,
+      year: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}year'],
+      )!,
+    );
+  }
+
+  @override
+  $MemberFeeTable createAlias(String alias) {
+    return $MemberFeeTable(attachedDatabase, alias);
+  }
+}
+
+class MemberFeeData extends DataClass implements Insertable<MemberFeeData> {
+  final int id;
+  final int memberInfoId;
+  final double amountPaid;
+  final DateTime paidOn;
+  final int year;
+  const MemberFeeData({
+    required this.id,
+    required this.memberInfoId,
+    required this.amountPaid,
+    required this.paidOn,
+    required this.year,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['member_info_id'] = Variable<int>(memberInfoId);
+    map['amount_paid'] = Variable<double>(amountPaid);
+    map['paid_on'] = Variable<DateTime>(paidOn);
+    map['year'] = Variable<int>(year);
+    return map;
+  }
+
+  MemberFeeCompanion toCompanion(bool nullToAbsent) {
+    return MemberFeeCompanion(
+      id: Value(id),
+      memberInfoId: Value(memberInfoId),
+      amountPaid: Value(amountPaid),
+      paidOn: Value(paidOn),
+      year: Value(year),
+    );
+  }
+
+  factory MemberFeeData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MemberFeeData(
+      id: serializer.fromJson<int>(json['id']),
+      memberInfoId: serializer.fromJson<int>(json['memberInfoId']),
+      amountPaid: serializer.fromJson<double>(json['amountPaid']),
+      paidOn: serializer.fromJson<DateTime>(json['paidOn']),
+      year: serializer.fromJson<int>(json['year']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'memberInfoId': serializer.toJson<int>(memberInfoId),
+      'amountPaid': serializer.toJson<double>(amountPaid),
+      'paidOn': serializer.toJson<DateTime>(paidOn),
+      'year': serializer.toJson<int>(year),
+    };
+  }
+
+  MemberFeeData copyWith({
+    int? id,
+    int? memberInfoId,
+    double? amountPaid,
+    DateTime? paidOn,
+    int? year,
+  }) => MemberFeeData(
+    id: id ?? this.id,
+    memberInfoId: memberInfoId ?? this.memberInfoId,
+    amountPaid: amountPaid ?? this.amountPaid,
+    paidOn: paidOn ?? this.paidOn,
+    year: year ?? this.year,
+  );
+  MemberFeeData copyWithCompanion(MemberFeeCompanion data) {
+    return MemberFeeData(
+      id: data.id.present ? data.id.value : this.id,
+      memberInfoId: data.memberInfoId.present
+          ? data.memberInfoId.value
+          : this.memberInfoId,
+      amountPaid: data.amountPaid.present
+          ? data.amountPaid.value
+          : this.amountPaid,
+      paidOn: data.paidOn.present ? data.paidOn.value : this.paidOn,
+      year: data.year.present ? data.year.value : this.year,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MemberFeeData(')
+          ..write('id: $id, ')
+          ..write('memberInfoId: $memberInfoId, ')
+          ..write('amountPaid: $amountPaid, ')
+          ..write('paidOn: $paidOn, ')
+          ..write('year: $year')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, memberInfoId, amountPaid, paidOn, year);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MemberFeeData &&
+          other.id == this.id &&
+          other.memberInfoId == this.memberInfoId &&
+          other.amountPaid == this.amountPaid &&
+          other.paidOn == this.paidOn &&
+          other.year == this.year);
+}
+
+class MemberFeeCompanion extends UpdateCompanion<MemberFeeData> {
+  final Value<int> id;
+  final Value<int> memberInfoId;
+  final Value<double> amountPaid;
+  final Value<DateTime> paidOn;
+  final Value<int> year;
+  const MemberFeeCompanion({
+    this.id = const Value.absent(),
+    this.memberInfoId = const Value.absent(),
+    this.amountPaid = const Value.absent(),
+    this.paidOn = const Value.absent(),
+    this.year = const Value.absent(),
+  });
+  MemberFeeCompanion.insert({
+    this.id = const Value.absent(),
+    required int memberInfoId,
+    required double amountPaid,
+    required DateTime paidOn,
+    required int year,
+  }) : memberInfoId = Value(memberInfoId),
+       amountPaid = Value(amountPaid),
+       paidOn = Value(paidOn),
+       year = Value(year);
+  static Insertable<MemberFeeData> custom({
+    Expression<int>? id,
+    Expression<int>? memberInfoId,
+    Expression<double>? amountPaid,
+    Expression<DateTime>? paidOn,
+    Expression<int>? year,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (memberInfoId != null) 'member_info_id': memberInfoId,
+      if (amountPaid != null) 'amount_paid': amountPaid,
+      if (paidOn != null) 'paid_on': paidOn,
+      if (year != null) 'year': year,
+    });
+  }
+
+  MemberFeeCompanion copyWith({
+    Value<int>? id,
+    Value<int>? memberInfoId,
+    Value<double>? amountPaid,
+    Value<DateTime>? paidOn,
+    Value<int>? year,
+  }) {
+    return MemberFeeCompanion(
+      id: id ?? this.id,
+      memberInfoId: memberInfoId ?? this.memberInfoId,
+      amountPaid: amountPaid ?? this.amountPaid,
+      paidOn: paidOn ?? this.paidOn,
+      year: year ?? this.year,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (memberInfoId.present) {
+      map['member_info_id'] = Variable<int>(memberInfoId.value);
+    }
+    if (amountPaid.present) {
+      map['amount_paid'] = Variable<double>(amountPaid.value);
+    }
+    if (paidOn.present) {
+      map['paid_on'] = Variable<DateTime>(paidOn.value);
+    }
+    if (year.present) {
+      map['year'] = Variable<int>(year.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MemberFeeCompanion(')
+          ..write('id: $id, ')
+          ..write('memberInfoId: $memberInfoId, ')
+          ..write('amountPaid: $amountPaid, ')
+          ..write('paidOn: $paidOn, ')
+          ..write('year: $year')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $MemberInfoTable memberInfo = $MemberInfoTable(this);
+  late final $MemberFeeTable memberFee = $MemberFeeTable(this);
   Selectable<int> getTotalMember() {
     return customSelect(
       'SELECT COUNT(DISTINCT id) AS _c0 FROM member_info',
@@ -692,7 +1051,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [memberInfo];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [memberInfo, memberFee];
 }
 
 typedef $$MemberInfoTableCreateCompanionBuilder =
@@ -723,6 +1082,32 @@ typedef $$MemberInfoTableUpdateCompanionBuilder =
       Value<DateTime> createdAt,
       Value<DateTime> lastUpdatedAt,
     });
+
+final class $$MemberInfoTableReferences
+    extends BaseReferences<_$AppDatabase, $MemberInfoTable, MemberInfoData> {
+  $$MemberInfoTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$MemberFeeTable, List<MemberFeeData>>
+  _memberFeeRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.memberFee,
+    aliasName: $_aliasNameGenerator(
+      db.memberInfo.id,
+      db.memberFee.memberInfoId,
+    ),
+  );
+
+  $$MemberFeeTableProcessedTableManager get memberFeeRefs {
+    final manager = $$MemberFeeTableTableManager(
+      $_db,
+      $_db.memberFee,
+    ).filter((f) => f.memberInfoId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_memberFeeRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
 
 class $$MemberInfoTableFilterComposer
     extends Composer<_$AppDatabase, $MemberInfoTable> {
@@ -787,6 +1172,31 @@ class $$MemberInfoTableFilterComposer
     column: $table.lastUpdatedAt,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> memberFeeRefs(
+    Expression<bool> Function($$MemberFeeTableFilterComposer f) f,
+  ) {
+    final $$MemberFeeTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.memberFee,
+      getReferencedColumn: (t) => t.memberInfoId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MemberFeeTableFilterComposer(
+            $db: $db,
+            $table: $db.memberFee,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$MemberInfoTableOrderingComposer
@@ -905,6 +1315,31 @@ class $$MemberInfoTableAnnotationComposer
     column: $table.lastUpdatedAt,
     builder: (column) => column,
   );
+
+  Expression<T> memberFeeRefs<T extends Object>(
+    Expression<T> Function($$MemberFeeTableAnnotationComposer a) f,
+  ) {
+    final $$MemberFeeTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.memberFee,
+      getReferencedColumn: (t) => t.memberInfoId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MemberFeeTableAnnotationComposer(
+            $db: $db,
+            $table: $db.memberFee,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$MemberInfoTableTableManager
@@ -918,12 +1353,9 @@ class $$MemberInfoTableTableManager
           $$MemberInfoTableAnnotationComposer,
           $$MemberInfoTableCreateCompanionBuilder,
           $$MemberInfoTableUpdateCompanionBuilder,
-          (
-            MemberInfoData,
-            BaseReferences<_$AppDatabase, $MemberInfoTable, MemberInfoData>,
-          ),
+          (MemberInfoData, $$MemberInfoTableReferences),
           MemberInfoData,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool memberFeeRefs})
         > {
   $$MemberInfoTableTableManager(_$AppDatabase db, $MemberInfoTable table)
     : super(
@@ -989,9 +1421,45 @@ class $$MemberInfoTableTableManager
                 lastUpdatedAt: lastUpdatedAt,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$MemberInfoTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({memberFeeRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (memberFeeRefs) db.memberFee],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (memberFeeRefs)
+                    await $_getPrefetchedData<
+                      MemberInfoData,
+                      $MemberInfoTable,
+                      MemberFeeData
+                    >(
+                      currentTable: table,
+                      referencedTable: $$MemberInfoTableReferences
+                          ._memberFeeRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$MemberInfoTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).memberFeeRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where(
+                            (e) => e.memberInfoId == item.id,
+                          ),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -1006,12 +1474,324 @@ typedef $$MemberInfoTableProcessedTableManager =
       $$MemberInfoTableAnnotationComposer,
       $$MemberInfoTableCreateCompanionBuilder,
       $$MemberInfoTableUpdateCompanionBuilder,
-      (
-        MemberInfoData,
-        BaseReferences<_$AppDatabase, $MemberInfoTable, MemberInfoData>,
-      ),
+      (MemberInfoData, $$MemberInfoTableReferences),
       MemberInfoData,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool memberFeeRefs})
+    >;
+typedef $$MemberFeeTableCreateCompanionBuilder =
+    MemberFeeCompanion Function({
+      Value<int> id,
+      required int memberInfoId,
+      required double amountPaid,
+      required DateTime paidOn,
+      required int year,
+    });
+typedef $$MemberFeeTableUpdateCompanionBuilder =
+    MemberFeeCompanion Function({
+      Value<int> id,
+      Value<int> memberInfoId,
+      Value<double> amountPaid,
+      Value<DateTime> paidOn,
+      Value<int> year,
+    });
+
+final class $$MemberFeeTableReferences
+    extends BaseReferences<_$AppDatabase, $MemberFeeTable, MemberFeeData> {
+  $$MemberFeeTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $MemberInfoTable _memberInfoIdTable(_$AppDatabase db) =>
+      db.memberInfo.createAlias(
+        $_aliasNameGenerator(db.memberFee.memberInfoId, db.memberInfo.id),
+      );
+
+  $$MemberInfoTableProcessedTableManager get memberInfoId {
+    final $_column = $_itemColumn<int>('member_info_id')!;
+
+    final manager = $$MemberInfoTableTableManager(
+      $_db,
+      $_db.memberInfo,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_memberInfoIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$MemberFeeTableFilterComposer
+    extends Composer<_$AppDatabase, $MemberFeeTable> {
+  $$MemberFeeTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get amountPaid => $composableBuilder(
+    column: $table.amountPaid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get paidOn => $composableBuilder(
+    column: $table.paidOn,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$MemberInfoTableFilterComposer get memberInfoId {
+    final $$MemberInfoTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.memberInfoId,
+      referencedTable: $db.memberInfo,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MemberInfoTableFilterComposer(
+            $db: $db,
+            $table: $db.memberInfo,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MemberFeeTableOrderingComposer
+    extends Composer<_$AppDatabase, $MemberFeeTable> {
+  $$MemberFeeTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get amountPaid => $composableBuilder(
+    column: $table.amountPaid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get paidOn => $composableBuilder(
+    column: $table.paidOn,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get year => $composableBuilder(
+    column: $table.year,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$MemberInfoTableOrderingComposer get memberInfoId {
+    final $$MemberInfoTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.memberInfoId,
+      referencedTable: $db.memberInfo,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MemberInfoTableOrderingComposer(
+            $db: $db,
+            $table: $db.memberInfo,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MemberFeeTableAnnotationComposer
+    extends Composer<_$AppDatabase, $MemberFeeTable> {
+  $$MemberFeeTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<double> get amountPaid => $composableBuilder(
+    column: $table.amountPaid,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get paidOn =>
+      $composableBuilder(column: $table.paidOn, builder: (column) => column);
+
+  GeneratedColumn<int> get year =>
+      $composableBuilder(column: $table.year, builder: (column) => column);
+
+  $$MemberInfoTableAnnotationComposer get memberInfoId {
+    final $$MemberInfoTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.memberInfoId,
+      referencedTable: $db.memberInfo,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MemberInfoTableAnnotationComposer(
+            $db: $db,
+            $table: $db.memberInfo,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$MemberFeeTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $MemberFeeTable,
+          MemberFeeData,
+          $$MemberFeeTableFilterComposer,
+          $$MemberFeeTableOrderingComposer,
+          $$MemberFeeTableAnnotationComposer,
+          $$MemberFeeTableCreateCompanionBuilder,
+          $$MemberFeeTableUpdateCompanionBuilder,
+          (MemberFeeData, $$MemberFeeTableReferences),
+          MemberFeeData,
+          PrefetchHooks Function({bool memberInfoId})
+        > {
+  $$MemberFeeTableTableManager(_$AppDatabase db, $MemberFeeTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$MemberFeeTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$MemberFeeTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$MemberFeeTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> memberInfoId = const Value.absent(),
+                Value<double> amountPaid = const Value.absent(),
+                Value<DateTime> paidOn = const Value.absent(),
+                Value<int> year = const Value.absent(),
+              }) => MemberFeeCompanion(
+                id: id,
+                memberInfoId: memberInfoId,
+                amountPaid: amountPaid,
+                paidOn: paidOn,
+                year: year,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int memberInfoId,
+                required double amountPaid,
+                required DateTime paidOn,
+                required int year,
+              }) => MemberFeeCompanion.insert(
+                id: id,
+                memberInfoId: memberInfoId,
+                amountPaid: amountPaid,
+                paidOn: paidOn,
+                year: year,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$MemberFeeTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({memberInfoId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (memberInfoId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.memberInfoId,
+                                referencedTable: $$MemberFeeTableReferences
+                                    ._memberInfoIdTable(db),
+                                referencedColumn: $$MemberFeeTableReferences
+                                    ._memberInfoIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$MemberFeeTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $MemberFeeTable,
+      MemberFeeData,
+      $$MemberFeeTableFilterComposer,
+      $$MemberFeeTableOrderingComposer,
+      $$MemberFeeTableAnnotationComposer,
+      $$MemberFeeTableCreateCompanionBuilder,
+      $$MemberFeeTableUpdateCompanionBuilder,
+      (MemberFeeData, $$MemberFeeTableReferences),
+      MemberFeeData,
+      PrefetchHooks Function({bool memberInfoId})
     >;
 
 class $AppDatabaseManager {
@@ -1019,4 +1799,6 @@ class $AppDatabaseManager {
   $AppDatabaseManager(this._db);
   $$MemberInfoTableTableManager get memberInfo =>
       $$MemberInfoTableTableManager(_db, _db.memberInfo);
+  $$MemberFeeTableTableManager get memberFee =>
+      $$MemberFeeTableTableManager(_db, _db.memberFee);
 }

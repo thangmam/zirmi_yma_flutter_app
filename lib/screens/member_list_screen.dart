@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:motion_toast/motion_toast.dart';
 import 'package:yma_app/database/app_database.dart';
 import 'package:yma_app/screens/edit_member_screen.dart';
+import 'package:yma_app/screens/member_fee_screen.dart';
 import 'package:yma_app/utils/db_helper.dart';
 import 'package:yma_app/utils/debouncer.dart';
 
@@ -152,6 +153,18 @@ class _MemberListScreenState extends State<MemberListScreen> {
                                   }
                                 },
                                 icon: Icon(Icons.edit, color: Colors.green),
+                              ),
+                              Spacer(),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          MemberFeeScreen(member: member),
+                                    ),
+                                  );
+                                },
+                                child: Text("Fees"),
                               ),
                             ],
                           ),

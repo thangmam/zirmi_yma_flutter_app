@@ -1,0 +1,23 @@
+table member_info{
+    id int
+    hming string 
+    pa_hming string 
+    nu_hming string
+    current_address string 
+    pervious_address string 
+    address_status string 
+    gender string 
+    marital_status string 
+    created_at datetime
+    updated_at datetime
+}
+
+table member_fee{
+    id int
+    member_info_id int
+    amount_paid float
+    paid_on datetime 
+    year int
+}
+
+Ref: member_fee.member_info_id > member_info.id

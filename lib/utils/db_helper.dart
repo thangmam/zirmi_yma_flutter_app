@@ -16,6 +16,69 @@ class DbHelper {
     _db = AppDatabase();
   }
 
+  Future<int> deleteFee({required int feeId}) async {
+    final query = _db.delete(_db.memberFee);
+
+    query.where((f) => f.id.equals(feeId));
+
+    return await query.go();
+  }
+
+  Future<int> addFeeForMember({
+    required int memberId,
+    required double fee,
+    required DateTime paidOn,
+    required int year,
+  }) async {
+    return await _db
+        .into(_db.memberFee)
+        .insert(
+          MemberFeeCompanion.insert(
+            memberInfoId: memberId,
+            amountPaid: fee,
+            paidOn: paidOn,
+            year: year,
+          ),
+        );
+  }
+
+  Future<int> updateFeeForMember({
+    required int feeId,
+    double? fee,
+    DateTime? paidOn,
+    int? year,
+  }) async {
+    return await _db
+        .update(_db.memberFee)
+        .write(
+          MemberFeeCompanion(
+            id: Value(feeId),
+            amountPaid: Value.absentIfNull(fee),
+            paidOn: Value.absentIfNull(paidOn),
+            year: Value.absentIfNull(year),
+          ),
+        );
+  }
+
+  Future<List<MemberFeeData>> getFeesForMember({
+    int page = 1,
+    required int memberId,
+    int itemsPerPage = 10,
+  }) async {
+    int offset = 0;
+    if (page > 1) {
+      offset = itemsPerPage * (page - 1);
+    }
+
+    final query = _db.select(_db.memberFee);
+
+    query.where((f) => f.memberInfoId.equals(memberId));
+
+    query.limit(itemsPerPage, offset: offset);
+
+    return await query.get();
+  }
+
   Future<List<MemberInfoData>> getMemberList({
     int page = 1,
     int itemsPerPage = 10,
