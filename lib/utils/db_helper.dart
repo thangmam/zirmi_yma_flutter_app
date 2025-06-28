@@ -48,16 +48,18 @@ class DbHelper {
     DateTime? paidOn,
     int? year,
   }) async {
-    return await _db
-        .update(_db.memberFee)
-        .write(
-          MemberFeeCompanion(
-            id: Value(feeId),
-            amountPaid: Value.absentIfNull(fee),
-            paidOn: Value.absentIfNull(paidOn),
-            year: Value.absentIfNull(year),
-          ),
-        );
+    final query = _db.update(_db.memberFee);
+
+    query.where((f) => f.id.equals(feeId));
+
+    return await query.write(
+      MemberFeeCompanion(
+        id: Value(feeId),
+        amountPaid: Value.absentIfNull(fee),
+        paidOn: Value.absentIfNull(paidOn),
+        year: Value.absentIfNull(year),
+      ),
+    );
   }
 
   Future<List<MemberFeeData>> getFeesForMember({

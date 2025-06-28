@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:yma_app/database/app_database.dart';
 import 'package:yma_app/utils/db_helper.dart';
 import 'package:yma_app/widgets/dialog/add_member_fee_dialog.dart';
+import 'package:yma_app/widgets/dialog/confirm_delete_fee_dialog.dart';
+import 'package:yma_app/widgets/dialog/update_member_fee_dialog.dart';
 
 class MemberFeeScreen extends StatefulWidget {
   final MemberInfoData member;
@@ -63,30 +65,65 @@ class _MemberFeeScreenState extends State<MemberFeeScreen> {
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         itemBuilder: (context, index) {
           final fee = _feeList![index];
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Amount: ${fee.amountPaid}"),
-              Text("Paid on: ${DateFormat("dd-MMM-yyyy").format(fee.paidOn)}"),
-              Text("Year: ${fee.year}"),
-              Row(
+          return Card.outlined(
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextButton(onPressed: () {}, child: Text("Edit")),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      "Delete",
-                      style: TextStyle(color: Colors.red.shade800),
-                    ),
+                  Text("Year: ${fee.year}", style: TextStyle(fontSize: 20)),
+                  Text(
+                    "Amount Paid : ${fee.amountPaid}",
+                    style: TextStyle(color: Colors.black54),
+                  ),
+                  Text(
+                    "Paid on: ${DateFormat("dd-MMM-yyyy").format(fee.paidOn)}",
+                    style: TextStyle(color: Colors.black54),
+                  ),
+                  Row(
+                    children: [
+                      TextButton(
+                        onPressed: () async {
+                          final result = await showDialog<bool?>(
+                            context: context,
+                            builder: (context) =>
+                                UpdateMemberFeeDialog(fee: fee),
+                          );
+                          if (result == true) {
+                            _feeList?.clear();
+                            _fetchFees(page: 1);
+                          }
+                        },
+                        child: Text("Edit"),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          final result = await showDialog<bool?>(
+                            context: context,
+                            builder: (context) =>
+                                ConfirmDeleteFeeDialog(feeId: fee.id),
+                          );
+
+                          if (result == true) {
+                            _feeList?.clear();
+                            _fetchFees(page: 1);
+                          }
+                        },
+                        child: Text(
+                          "Delete",
+                          style: TextStyle(color: Colors.red.shade800),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           );
         },
         itemCount: _feeList?.length ?? 0,
         separatorBuilder: (BuildContext context, int index) {
-          return SizedBox(height: 10);
+          return SizedBox(height: 4);
         },
       ),
     );
